@@ -5,7 +5,7 @@ An island is surrounded by water and is formed by connecting adjacent lands hori
 
  
 
-Example 1:
+Example :
 ```
 Input: grid = [
   
