@@ -23,3 +23,5 @@ Input: grid = [
 Output: 1
 
 ```
+
+Inspires From:- https://leetcode.com/problems/number-of-islands/
