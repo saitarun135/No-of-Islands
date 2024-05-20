@@ -10,16 +10,11 @@
 function numIslands($landDetector)
 {
     $landDetector = 1;
-    // $grid = [
-    //     ["1","1","1","1","0"],
-    //     ["1","1","0","1","0"],
-    //     ["1","1","0","0","0"],
-    //     ["0","0","0","0","0"]
-    // ];
-    $grid = [
-        ["1","1","1"],
-        ["0","1","0"],
-        ["1","1"]
+    $grid =[
+        ["1","1","0","0","0"],
+        ["1","1","0","0","0"],
+        ["0","0","1","0","0"],
+        ["0","0","0","1","1"]
     ];
 
     $links = 0;
@@ -40,8 +35,7 @@ function numIslands($landDetector)
             }
         }
     }
-print_r($visited);
-    echo $links;
+    return $links;
 }
 
 
@@ -72,6 +66,11 @@ function adjacentLands($indexOfRow, $positionOfColumn, $grid, $columnLands, $cur
             $left_position = ($indexOfRow).','.$left_side;
             if(!array_key_exists($left_position,$visited))
                 $left = $grid[$indexOfRow][$positionOfColumn-1];
+
+            $top_position = ($indexOfRow - 1).','.$positionOfColumn;
+            if(!array_key_exists($top_position,$visited))
+                $top = $grid[$indexOfRow-1][$positionOfColumn];
+
         }
 
         if( $right == 1 && !array_key_exists($right_position,$visited) )
@@ -79,7 +78,9 @@ function adjacentLands($indexOfRow, $positionOfColumn, $grid, $columnLands, $cur
         if( $btm == 1 && !array_key_exists($btm_position,$visited) )
             $stack[$btm_position] = $btm;
         if( $left == 1 )
-            $stack[$left_position] = $left; 
+            $stack[$left_position] = $left;
+        if( $top == 1)
+            $stack[$top_position] = $top;
 
         if(!empty($stack))
             dfs($visited, $stack, $IndexedVisited, $grid); ## recursive
