@@ -1,4 +1,7 @@
 <?php
+// $IndexedVisited = [];
+// $visited = [];
+// $stack = [];
 
 /**
  * rows * columns
@@ -7,14 +10,21 @@
 function numIslands($landDetector)
 {
     $landDetector = 1;
+    // $grid = [
+    //     ["1","1","1","1","0"],
+    //     ["1","1","0","1","0"],
+    //     ["1","1","0","0","0"],
+    //     ["0","0","0","0","0"]
+    // ];
     $grid = [
-        ["1","1","1","1","0"],
-        ["1","1","0","1","0"],
-        ["1","1","0","0","0"],
-        ["0","0","0","0","0"]
+        ["1","1","1"],
+        ["0","1","0"],
+        ["1","1"]
     ];
 
-
+    $links = 0;
+    $IndexedVisited =[]; $visited=[]; $stack=[];
+    
     for($i=0; $i < count($grid); $i++) # rows
     {
         $columns = $grid[$i];
@@ -22,52 +32,72 @@ function numIslands($landDetector)
         {
             $currentValue = $columns[$j];
             if($currentValue == $landDetector){
-                adjacentLands($i,$j, $grid, $columns, $currentValue);
+                $currentPositionOfItem = $i.','.$j;
+                if(!array_key_exists($currentPositionOfItem,$IndexedVisited)){
+                    $links++;
+                    adjacentLands($i, $j, $grid, $columns, $currentValue ,$IndexedVisited,  $visited, $stack);
+                }
             }
         }
     }
+print_r($visited);
+    echo $links;
 }
 
 
-function adjacentLands($indexOfRow,$positionOfColumn, $grid, $columnLands, $currentValue)
+
+function adjacentLands($indexOfRow, $positionOfColumn, $grid, $columnLands, $currentValue, &$IndexedVisited, &$visited, &$stack)
 {
-    $traverse = true;
-    $startingPositionOfLand = 0;
-    $traversed_array = []; 
-    $IndexedVisited = [];
-    $visited = [];
-    $stack = [];
-    $top = ''; 
+    $top = '';
     $btm = ''; 
-    $left =''; 
-    $right='';
-
-    if($traverse)
+    $left = '';
+    $right = '';
+    
+    if(!array_key_exists($IndexedVisited[$indexOfRow.','.$positionOfColumn] , $IndexedVisited))
     {
-        $IndexedVisited[$indexOfRow.','.$positionOfColumn] = $currentValue;
-        array_push($visited, $currentValue);
-        $traversed_array[$indexOfRow.','.$positionOfColumn] = $currentValue;
-        if($positionOfColumn == $startingPositionOfLand)
+        $IndexedVisited[$indexOfRow.','.$positionOfColumn] = $currentValue; ## what are the indexes visited (optimization)
+
+        $visited[$indexOfRow.','.$positionOfColumn] = $currentValue;
+
+        $next_index = $positionOfColumn+1;
+        $right_position = ($indexOfRow).','.$next_index; # right-side position
+        $btm_position = ($indexOfRow+1) .','.($positionOfColumn);# btm position
+        
+        $right = (isset($columnLands[$next_index])) ? $columnLands[$next_index] : 0;
+        $btm = (isset($grid[$indexOfRow+1][$positionOfColumn])) ? $grid[$indexOfRow+1][$positionOfColumn] : 0;
+
+        if( $positionOfColumn != 0 )
         {
-            $right_position = ($indexOfRow).','.$positionOfColumn+1;
-            $btm_position = ($indexOfRow+1) .','.($positionOfColumn);
-            $right = $columnLands[$positionOfColumn+1];
-            $btm = $grid[$indexOfRow+1][$positionOfColumn];
-
-            if($right == 1)
-            {
-                $stack[$right_position] = $right;
-            }
-            if($btm == 1)
-            {
-                $stack[$btm_position] = $btm;
-            }
-            
-        }else{
-
+            $left_side = ($positionOfColumn-1);
+            $left_position = ($indexOfRow).','.$left_side;
+            if(!array_key_exists($left_position,$visited))
+                $left = $grid[$indexOfRow][$positionOfColumn-1];
         }
-    }
 
+        if( $right == 1 && !array_key_exists($right_position,$visited) )
+            $stack[$right_position] = $right;
+        if( $btm == 1 && !array_key_exists($btm_position,$visited) )
+            $stack[$btm_position] = $btm;
+        if( $left == 1 )
+            $stack[$left_position] = $left; 
+
+        if(!empty($stack))
+            dfs($visited, $stack, $IndexedVisited, $grid); ## recursive
+    }
+}
+
+function dfs($visited, $stack, &$IndexedVisited, $grid)
+{
+    foreach($stack as $key => $item)
+    {
+        $rawData = explode(",",$key);
+        $indexOfRow = $rawData[0];
+        $positionOfColumn = $rawData[1];
+        $columnLands = $grid[$indexOfRow];
+        $IndexedVisited[$indexOfRow.','.$positionOfColumn] = $item; ## $item is 1
+        unset($stack[$key]);
+        adjacentLands($indexOfRow, $positionOfColumn, $grid, $columnLands, $item, $IndexedVisited, $visited, $stack);
+    }
 }
 
 numIslands(1);
