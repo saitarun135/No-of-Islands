@@ -1,21 +1,18 @@
 <?php
-// $IndexedVisited = [];
-// $visited = [];
-// $stack = [];
 
 /**
  * rows * columns
  * 0->water,1->land
 */
-function numIslands($landDetector)
+function numIslands($landDetector,$grid)
 {
-    $landDetector = 1;
-    $grid =[
-        ["1","1","0","0","0"],
-        ["1","1","0","0","0"],
-        ["0","0","1","0","0"],
-        ["0","0","0","1","1"]
-    ];
+    // $landDetector = 1;
+    // $grid =[
+    //     ["1","1","0","0","0"],
+    //     ["1","1","0","0","0"],
+    //     ["0","0","1","0","0"],
+    //     ["0","0","0","1","1"]
+    // ];
 
     $links = 0;
     $IndexedVisited =[]; $visited=[]; $stack=[];
@@ -101,5 +98,5 @@ function dfs($visited, $stack, &$IndexedVisited, $grid)
     }
 }
 
-numIslands(1);
+numIslands(1,$grid);
 ?>
